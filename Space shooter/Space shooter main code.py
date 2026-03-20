@@ -16,7 +16,7 @@ x = 100
 # importing stuff
 player_surf = pygame.image.load('images/player.png').convert_alpha()
 player_rect = player_surf.get_frect(center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
-player_direction = pygame.math.Vector2(1, 0)
+player_direction = pygame.math.Vector2()
 player_speed = 300
 
 star_surface = pygame.image.load('images/star.png').convert_alpha()
@@ -36,6 +36,13 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    #input 
+    keys = pygame.key.get_pressed()
+    player_direction.x = int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])
+    player_direction.y = int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])
+    player_direction = player_direction.normalize() if player_direction else player_direction
+    player_rect.center += player_direction * player_speed * dt
+
     # draw the game
     display_surface.fill('grey20')
     for pos in star_position:
@@ -43,10 +50,6 @@ while running:
 
     display_surface.blit(meteor_surface, meteor_rect)
     display_surface.blit(laser_surf,laser_rect)
-
-    #moving the player
-    player_rect.center += player_direction * player_speed * dt
-    
     display_surface.blit(player_surf, player_rect.topleft)
 
     pygame.display.update()
